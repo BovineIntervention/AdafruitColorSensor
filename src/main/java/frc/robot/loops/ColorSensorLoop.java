@@ -17,9 +17,15 @@ public class ColorSensorLoop implements Loop
     int grnVal;
     int bluVal;
     int clrVal;
+    public Solenoid valveSolenoid; 
+    public final int port = 1;
+    public static double valveRedD = -1;
+    public static double valveBlueD = 1;
+    public static double valveStop = 0;
 
     ColorSensorLoop() 
     {
+        valveSolenoid = new Solenoid(port);
         colorSensor = new TCS34725ColorSensor();
         int ret_val = colorSensor.init();;
         if (ret_val != 0)
@@ -41,19 +47,31 @@ public class ColorSensorLoop implements Loop
     public void onLoop() 
     {
         // // read values from sensors
-        // int ret_val = colorSensor.readColors();
+         int ret_val = colorSensor.readColors();
 
-        // if (ret_val != 0)
-        // {
-        //     System.out.printf("Failed to read from ColorSensor: error code %d", ret_val);
-        //     return;
-        // }
+         if (ret_val != 0)
+         {
+            System.out.printf("Failed to read from ColorSensor: error code %d", ret_val);
+            return;
+         }
 
-        // // after a successful read, you can query the individual colors
-        // redVal =  colorSensor.getRedVal();
-        // grnVal =  colorSensor.getGreenVal();
-        // bluVal =  colorSensor.getBlueVal();
+        // after a successful read, you can query the individual colors
         // clrVal =  colorSensor.getClearVal();
+        // grnVal =  colorSensor.getGreenVal();
+         redVal =  colorSensor.getRedVal();
+         bluVal =  colorSensor.getBlueVal();
+        if (redVal == 2)
+        {
+            valveSolenoid.set(valveRedD);
+        }
+        else if (blue == 1)
+        {
+            valveSolenoid.set(valveBlueD);
+        }
+        else
+        {
+            valveSolenoid.set(valveStop);
+        }
 
         // // for now, just print out the colors
         // System.out.println(toString());
