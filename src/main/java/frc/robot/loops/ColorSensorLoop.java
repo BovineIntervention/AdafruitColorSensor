@@ -1,6 +1,7 @@
 package frc.robot.loops;
 
 import frc.robot.lib.sensors.TCS34725ColorSensor;
+import frc.robot.lib.sensors.TCS34725ColorSensor.TCSColor;
 
 /**
  * Periodically estimates the state of the robot using the robot's distance
@@ -13,15 +14,13 @@ public class ColorSensorLoop implements Loop
     public static ColorSensorLoop getInstance() { return instance; }
 
     TCS34725ColorSensor colorSensor;
-    int redVal;
-    int grnVal;
-    int bluVal;
-    int clrVal;
+    TCSColor color;
 
+ 
     ColorSensorLoop() 
     {
         colorSensor = new TCS34725ColorSensor();
-        int ret_val = colorSensor.init();;
+        int ret_val = colorSensor.init();
         if (ret_val != 0)
         {
             System.out.println("ColorSensor failed to init");
@@ -37,26 +36,23 @@ public class ColorSensorLoop implements Loop
     	// no-op
     }
 
+    int loopCnt = 0;
+
     @Override
     public void onLoop() 
     {
-        // // read values from sensors
-        // int ret_val = colorSensor.readColors();
+        loopCnt++;
+        
+        if (loopCnt >= 10)
+        {
+            // read values from sensors
+            color = colorSensor.readColors();
 
-        // if (ret_val != 0)
-        // {
-        //     System.out.printf("Failed to read from ColorSensor: error code %d", ret_val);
-        //     return;
-        // }
+            // for now, just print out the colors
+            System.out.println(toString());
 
-        // // after a successful read, you can query the individual colors
-        // redVal =  colorSensor.getRedVal();
-        // grnVal =  colorSensor.getGreenVal();
-        // bluVal =  colorSensor.getBlueVal();
-        // clrVal =  colorSensor.getClearVal();
-
-        // // for now, just print out the colors
-        // System.out.println(toString());
+            loopCnt = 0;
+        }
     }
 
     @Override
@@ -65,11 +61,8 @@ public class ColorSensorLoop implements Loop
         // no-op
     }
 
-
-	public String toString() 
-    {
-		return String.format("ColorSensor R: %3d, G: %d, B: %d, C: %d\n", 
-				redVal, grnVal, bluVal, clrVal);
+    public String toString() {
+        return "ColorSensor: " + color.toString();
     }
 
 }
