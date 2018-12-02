@@ -241,12 +241,54 @@ public class TCS34725ColorSensor
 
 	public static class TCSColor {
 		private int r, g, b, c;
+		private int h, s, v;
 
 		public TCSColor(int r, int g, int b, int c) {
 			this.r = r;
 			this.g = g;
 			this.b = b;
 			this.c = c;
+
+			// convert RGB to HSV
+			// first, convert to floating point numbers between 0 and 1
+			double rr = (double)r/255.0;
+			double gg = (double)g/255.0;
+			double bb = (double)b/255.0;
+
+			double max = Math.max(Math.max(rr,gg),bb);
+			double min = Math.min(Math.min(rr,gg),bb);
+			double hh = 0.0;	// floating point hue, in degrees
+
+			if (max == min)	{
+				hh = 0.0;
+			}
+			else if (max == rr) {
+				hh = 60.0 * (0.0 + (gg-bb)/(max-min));
+			}
+			else if (max == gg)	{
+				hh = 60.0 * (2.0 + (bb-rr)/(max-min));
+			}
+			else { // (max == bb)
+				hh = 60.0 * (4.0 + (rr-gg)/(max-min));
+			}
+			if (hh < 0.0) {
+				hh = hh + 360.0;
+			}
+
+			double ss = 0.0;
+			if (max == 0){
+				ss = 0.0;
+			}
+			else{
+				ss = (max-min)/max;
+			}
+	
+			double vv = max;
+
+			// convert to 8-bit integers
+			h = (int)(hh/360.0*255.0);
+			s = (int)(ss*255.0);
+			v = (int)(vv*255.0);
 		}
 
 		public int getR() {
@@ -265,8 +307,20 @@ public class TCS34725ColorSensor
 			return this.c;
 		}
 
+		public int getH() {
+			return this.h;
+		}
+
+		public int getS() {
+			return this.s;
+		}
+
+		public int getV() {
+			return this.v;
+		}
+
 		public String toString() {
-			return String.format("[R:% 5d,   G:% 5d,   B:% 5d,   C:% 5d]", r, g, b, c);
+			return String.format("[R:% 5d,   G:% 5d,   B:% 5d,   C:% 5d,   H:% 5d,   S:% 5d,   V:% 5d]", r, g, b, c, h, s, v);
 		}
 	}	
 }

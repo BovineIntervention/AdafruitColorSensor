@@ -15,7 +15,7 @@ public class ColorSensorLoop implements Loop
 
     TCS34725ColorSensor colorSensor;
     TCSColor color;
-
+    boolean foundRed = false;
  
     ColorSensorLoop() 
     {
@@ -41,15 +41,26 @@ public class ColorSensorLoop implements Loop
     @Override
     public void onLoop() 
     {
+        // read values from sensors
+        color = colorSensor.readColors();
+        foundRed = true;
+        if ((color.getH() >= 42) && (color.getH() <= 205))
+        {
+            // color is in the blue & green regions
+            foundRed = false;
+        }   
+
+        // counter to write to screen about 5 times/second
         loopCnt++;
-        
         if (loopCnt >= 10)
         {
-            // read values from sensors
-            color = colorSensor.readColors();
+            if (foundRed)
+                System.out.println("Red");
+            else
+                System.out.println("Blue");
 
             // for now, just print out the colors
-            System.out.println(toString());
+            //System.out.println(toString());
 
             loopCnt = 0;
         }
