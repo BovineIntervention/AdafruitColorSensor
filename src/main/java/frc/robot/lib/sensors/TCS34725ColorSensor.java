@@ -2,13 +2,16 @@ package frc.robot.lib.sensors;
 
 import edu.wpi.first.wpilibj.I2C;
 
+@SuppressWarnings("unused")
+
 /**
  * TCS34725ColorSensor - Simple API for the TCS34725 color sensor from adafruit
  * Provides interfacing for initializing the sensor and performing qualified reads of color values.
- * Coded with lots and lots of help from https://github.com/adafruit/Adafruit_TCS34725. 
- * Thanks KTOWN!!! If I ever meet you, I owe you a beer.
- * @author Chris Gerth
- *
+ * Based on Robot Casserole 1736's code here 
+ * https://github.com/RobotCasserole1736/CasseroleLib/blob/master/java/src/org/usfirst/frc/team1736/lib/Sensors/TCS34725ColorSensor.java
+ * But with changes:
+ * 		1. using the COMMAND_BIT and COMMAND_AUTO_INCREMENT (got no response from sensor without them)
+ * 		2. and adding HSV calculation
  */
 public class TCS34725ColorSensor 
 {
@@ -59,10 +62,6 @@ public class TCS34725ColorSensor
 	//State Variables
 	public boolean sensor_initialized;
 	public boolean good_data_read;
-	private int red_val;
-	private int green_val;
-	private int blue_val;
-	private int clear_val;
 	
 	
 	/**
